@@ -97,6 +97,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	private int tabBackgroundResId = R.drawable.background_tab;
 
 	private Locale locale;
+	
+	//  set the indicatorline's width fix the text width
+        private boolean isIndicatorWidthWithText = false;
 
 	public PagerSlidingTabStrip(Context context) {
 		this(context, null);
@@ -334,6 +337,16 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 			lineRight = (currentPositionOffset * nextTabRight + (1f - currentPositionOffset) * lineRight);
 		}
 
+		if (isIndicatorWidthWithText){
+                    // set the indicatorLine's width fix the text
+                    View tab = tabsContainer.getChildAt(currentPosition);
+                    TextPaint paint = ((TextView)tab).getPaint();
+                    float paintWidth = paint.measureText((String) ((TextView) tab).getText());
+                    float mid = (lineRight - lineLeft)/2 + lineLeft;
+                    lineLeft = mid -paintWidth/2;
+                    lineRight = mid + paintWidth/2;
+        }
+		
 		canvas.drawRect(lineLeft, height - indicatorHeight, lineRight, height, rectPaint);
 
 		// draw underline
@@ -387,6 +400,16 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
 	}
 
+	/**
+         * @param widthWithText
+         * true indicatorline's width fix the text
+         * false 
+        */
+    public void setIndicatorWidthWithText(boolean widthWithText){
+        this.isIndicatorWidthWithText = widthWithText;
+        invalidate();
+    }
+	
 	public void setIndicatorColor(int indicatorColor) {
 		this.indicatorColor = indicatorColor;
 		invalidate();
