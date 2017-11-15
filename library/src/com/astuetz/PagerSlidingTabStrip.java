@@ -97,6 +97,9 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	private int tabBackgroundResId = R.drawable.background_tab;
 
 	private Locale locale;
+	
+	// 设置下划线宽度随整体文字宽度
+        private boolean isIndicatorWidthWithText = false;
 
 	public PagerSlidingTabStrip(Context context) {
 		this(context, null);
@@ -333,6 +336,16 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 			lineLeft = (currentPositionOffset * nextTabLeft + (1f - currentPositionOffset) * lineLeft);
 			lineRight = (currentPositionOffset * nextTabRight + (1f - currentPositionOffset) * lineRight);
 		}
+		
+		if (isIndicatorWidthWithText){
+          		 // 设置下划线宽度随整体文字宽度
+           	 	View tab = tabsContainer.getChildAt(currentPosition);
+           	 	TextPaint paint = ((TextView)tab).getPaint();
+           	 	float paintWidth = paint.measureText((String) ((TextView) tab).getText());
+           	 	float mid = (lineRight - lineLeft)/2 + lineLeft;
+          	  	lineLeft = mid -paintWidth/2;
+          	  	lineRight = mid + paintWidth/2;
+             	}
 
 		canvas.drawRect(lineLeft, height - indicatorHeight, lineRight, height, rectPaint);
 
@@ -392,6 +405,17 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		invalidate();
 	}
 
+	/**
+     * 选中某个Title后，Title下边的线的宽度跟随文字整体宽度
+     * @param widthWithText
+     * true 指示线宽度随文字整体宽度
+     * false 指示线宽度随tab整体宽度而不是具体文字内容宽度
+     */
+    	public void setIndicatorWidthWithText(boolean widthWithText){
+       	 	this.isIndicatorWidthWithText = widthWithText;
+       	 	invalidate();
+  	}
+	
 	public void setIndicatorColorResource(int resId) {
 		this.indicatorColor = getResources().getColor(resId);
 		invalidate();
